@@ -8,8 +8,11 @@ M.config = {
         ["<leader>n"] = "new_task",
         ["<leader>j"] = "next",
         ["<leader>k"] = "prev",
+        ["<leader>c"] = "complete",
+        ["<leader>u"] = "uncomplete",
         ["<leader>t"] = "toggle",
     },
+    disable_default_mappings = false,
     options = {},
     ---@diagnostic disable-next-line
     filepath = fn.expand("~/.todo.md"),
@@ -26,6 +29,9 @@ M.config = {
 
 ---@param opt table
 function M.setup(opt)
+    if opt.disable_default_mappings then
+        M.config.mappings = {}
+    end
     vim.tbl_deep_extend("force", M.config, opt)
 
     if not (M.config.new_task:find("%[ %]") or M.config.new_task:find("%[x%]")) then

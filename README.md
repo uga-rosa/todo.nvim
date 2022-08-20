@@ -17,6 +17,8 @@ todo.setup({
         ["<leader>k"] = "prev",
         ["<leader>t"] = action.toggle,
     },
+    -- Disables default mappings.
+    disable_default_mappings = true,
     options = {
         -- You can define options to be set in todo.md.
     },
