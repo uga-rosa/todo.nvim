@@ -13,21 +13,30 @@ function M.setup()
 end
 
 function M.setup_command()
-    api.nvim_create_user_command("TodoOpen", function()
-        M.open()
-    end, {})
+    api.nvim_create_user_command("TodoOpen", function(args)
+        M.open(args.bang)
+    end, {
+        bang = true,
+    })
 end
 
-function M.open()
-    ---@type string
-    local filepath = config.get_config("filepath") or ""
+---@param is_default? boolean
+function M.open(is_default)
+    ---@type string | function | nil
+    local filepath = config.get_config("filepath")
+    local filename = config.get_config("filename")
+
+    if not filepath or not filename then
+        error("filepath or filename is undefined")
+    elseif type(filepath) == "function" then
+        filepath = filepath(is_default)
+    end
+    filepath = filepath:gsub("{{filename}}", filename)
+
     vim.cmd("e " .. filepath)
     if not utils.exists(filepath) then
         local templete = config.get_config("templete") or ""
-        if #templete > 0 then
-            utils.insert_text(templete, 0, 1)
-        end
-        vim.cmd("w")
+        utils.insert_text(templete, 0, 1)
     end
 
     M.setup_mapping()

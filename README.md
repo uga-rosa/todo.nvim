@@ -2,6 +2,10 @@
 
 A Plugin for todo management with markdown.
 
+# Requires
+
+- plenary.nvim (plenary.job)
+
 # Setup
 
 ```lua
@@ -22,8 +26,12 @@ todo.setup({
     options = {
         -- You can define options to be set in todo.md.
     },
-    -- Path of todo.md.
-    filepath = vim.fn.expand("~/.todo.md"),
+    filename = "TODO.md",
+    -- A function with the boolean value 'is_default' as an argument, or a string.
+    -- By default, filepath is returned for each git repository.
+    -- Outside the git repository or when is_default is true (:TodoOpen!), `~/TODO.md` is returned.
+    -- In addition, the press holder `{{filename}}` is replaced by above `filename`.
+    filepath = "~/{{filename}}",
     -- Template used when todo.md is opened for the first time.
     templete = [[# TODO
 
@@ -42,7 +50,10 @@ todo.setup({
 # Command
 
 - TodoOpen
-    - Open todo.md.
+    - Open TODO.md.
+    - If in the git repository, open `{git root}/TODO.md`.
+    - Otherwise, open the default todo file: `~/TODO.md`.
+    - If you add bang (`:TodoOpen!`), you can open the default one even if in the git repository.
 
 # Action
 

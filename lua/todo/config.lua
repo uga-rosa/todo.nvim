@@ -1,4 +1,4 @@
-local fn = vim.fn
+local utils = require("todo.utils")
 
 local M = {}
 
@@ -14,8 +14,16 @@ M.config = {
     },
     disable_default_mappings = false,
     options = {},
-    ---@diagnostic disable-next-line
-    filepath = fn.expand("~/.todo.md"),
+    filename = "TODO.md",
+    filepath = function(is_default)
+        local git_root = utils.git_root()
+        if not is_default and git_root then
+            return git_root .. "/{{filename}}"
+        else
+            ---@diagnostic disable-next-line
+            return "~/{{filename}}"
+        end
+    end,
     templete = [[# TODO
 
 ## Have Deadline

@@ -32,4 +32,33 @@ function M.feedkey(key)
     api.nvim_feedkeys(api.nvim_replace_termcodes(key, true, false, true), "n", false)
 end
 
+---@param expr string?
+---@return string?
+function M.git_root(expr)
+    local cwd
+    if expr then
+        ---@type string
+        ---@diagnostic disable-next-line
+        cwd = fn.expand(expr)
+    else
+        cwd = vim.loop.cwd()
+    end
+
+    local result
+
+    local Job = require("plenary.job")
+    Job:new({
+        command = "git",
+        args = { "rev-parse", "--show-toplevel" },
+        cwd = cwd,
+        on_exit = function(self, code, _)
+            if code == 0 then
+                result = self:result()[1]
+            end
+        end,
+    }):sync()
+
+    return result
+end
+
 return M
